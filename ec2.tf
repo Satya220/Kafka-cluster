@@ -125,12 +125,12 @@ resource "aws_route_table_association" "a" {
   route_table_id = aws_route_table.nat_rt.id
 }
 
-resource "aws_route_table_association" "a" {
+resource "aws_route_table_association" "b" {
   subnet_id      = aws_subnet.private_1.id
   route_table_id = aws_route_table.nat_rt.id
 }
 
-resource "aws_route_table_association" "a" {
+resource "aws_route_table_association" "c" {
   subnet_id      = aws_subnet.private_2.id
   route_table_id = aws_route_table.nat_rt.id
 }
