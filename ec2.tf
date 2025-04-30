@@ -42,7 +42,7 @@ resource "aws_instance" "web" {
 
 resource "aws_nat_gateway" "NAT-1" {
   allocation_id = aws_eip.lb.id
-  subnet_id     = [aws_subnet.private.id.aws_subnet.private_1.id,aws_subnet.private_2.id]
+  subnet_id  = aws_subnet.private.id
 
   tags = {
     Name = "gw NAT"
@@ -50,7 +50,7 @@ resource "aws_nat_gateway" "NAT-1" {
 
   # To ensure proper ordering, it is recommended to add an explicit dependency
   # on the Internet Gateway for the VPC.
-  depends_on = [aws_internet_gateway.example]
+  depends_on = [aws_internet_gateway.gw]
 }
 
 resource "aws_eip" "lb" {
@@ -58,11 +58,11 @@ resource "aws_eip" "lb" {
 }
 
 resource "aws_route_table" "igw_rt" {
-  vpc_id = aws_vpc.example.id
+  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = "0.0.0.0"
-    gateway_id = aws_internet_gateway.example.id
+    gateway_id = aws_internet_gateway.gw.id
   }
 
   tags = {
@@ -71,11 +71,11 @@ resource "aws_route_table" "igw_rt" {
 }
 
 resource "aws_route_table" "nat_rt" {
-  vpc_id = aws_vpc.example.id
+  vpc_id = aws_vpc.main.id
 
   route {
     cidr_block = "0.0.0.0"
-    gateway_id = aws_nat_gateway.id
+    gateway_id = aws_nat_gateway.NAT-1.id
   }
 
   tags = {
