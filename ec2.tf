@@ -11,6 +11,15 @@ resource "aws_subnet" "private" {
   }
 }
 
+resource "aws_subnet" "public" {
+  vpc_id     = aws_vpc.main.id
+  cidr_block = "10.0.4.0/24"
+
+  tags = {
+    Name = "Public-1"
+  }
+}
+
 resource "aws_subnet" "private_1" {
   vpc_id     = aws_vpc.main.id
   cidr_block = "10.0.2.0/24"
@@ -95,7 +104,7 @@ resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4" {
 
 resource "aws_nat_gateway" "NAT-1" {
   allocation_id = aws_eip.lb.id
-  subnet_id  = aws_subnet.private.id
+  subnet_id  = aws_subnet.public.id
 
   tags = {
     Name = "gw NAT"
@@ -191,4 +200,9 @@ resource "aws_route_table_association" "b" {
 resource "aws_route_table_association" "c" {
   subnet_id      = aws_subnet.private_2.id
   route_table_id = aws_route_table.nat_rt.id
+}
+
+resource "aws_route_table_association" "e" {
+  subnet_id      = aws_subnet.public.id
+  route_table_id = aws_route_table.igw_rt.id
 }
